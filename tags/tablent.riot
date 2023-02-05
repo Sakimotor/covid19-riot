@@ -1,0 +1,147 @@
+<tablent>
+<h2 style=" padding-bottom: 3%;"> Tableau des cas par pays</h2>
+<br>
+<div class="barre-recherche" style="float:left;">
+<input type="text" id="rechercheCovid" onkeyup={()=>recherche()} placeholder="Pays" title="Pays">
+<select id="pagineCovid" onchange={()=>paginer()}>
+    <option value="10">10</option>
+    <option selected="selected" value="20">20</option>
+    <option value="50">50</option>
+    <option value="100">100</option>
+    <option value={Object.entries(this.state.datafull).length}>Tout</option>
+</select>
+</div>
+<table class="w3-table w3-striped" id="tableCovid">
+<tr> 
+<th> <strong>Pays <span class="w3-hover-text-red with w3-hover-text-opacity "  onclick={()=>tri('asc', 0, 0)}>▲ </span> <span class="w3-hover-text-red with w3-hover-text-opacity "  onclick={()=>tri('desc', 0, 0)}>▼ </span> </strong> </th>
+<th> <strong>Cas (Nouv.) <span class="w3-hover-text-red with w3-hover-text-opacity "  onclick={()=>tri('asc', 1, 1)}>▲ </span> <span class="w3-hover-text-red with w3-hover-text-opacity "  onclick={()=>tri('desc', 1, 1)}>▼ </span> </strong></th>
+<th > <strong>Décès (Nouv.) <span class="w3-hover-text-red with w3-hover-text-opacity "  onclick={()=>tri('asc', 2, 2)}>▲ </span> <span class="w3-hover-text-red with w3-hover-text-opacity "  onclick={()=>tri('desc', 2, 2)}>▼ </span></strong> </th>
+<th > <strong>Guéris (Nouv.) <span class="w3-hover-text-red with w3-hover-text-opacity "  onclick={()=>tri('asc', 3, 3)}>▲ </span> <span class="w3-hover-text-red with w3-hover-text-opacity "  onclick={()=>tri('desc', 3, 3)}>▼ </span></strong> </th>
+<th > <strong>Cas (Total)<span class="w3-hover-text-red with w3-hover-text-opacity "  onclick={()=>tri('asc', 4, 4)}>▲ </span> <span class="w3-hover-text-red with w3-hover-text-opacity "  onclick={()=>tri('desc', 4, 4)}>▼ </span> </strong></th>
+<th > <strong>Décès (Total) <span class="w3-hover-text-red with w3-hover-text-opacity "  onclick={()=>tri('asc', 5, 5)}>▲ </span> <span class="w3-hover-text-red with w3-hover-text-opacity "  onclick={()=>tri('desc', 5, 5)}>▼ </span></strong> </th>
+<th > <strong>Guéris (Total) <span class="w3-hover-text-red with w3-hover-text-opacity "  onclick={()=>tri('asc', 6, 6)}>▲ </span> <span class="w3-hover-text-red with w3-hover-text-opacity "  onclick={()=>tri('desc', 6, 6)}>▼ </span></strong> </th>
+</tr>
+<tr each={ country in Object.entries(this.state.data).slice(this.state.debut, this.state.fin)}>
+<td><a href ="{this.props.url}#/country/{country[1].slug}"> {country[1].Country} </a> </td> 
+<td class="w3-text-cyan"> { country[1].newConfirmed} </td>
+<td class="w3-text-red">{ country[1].newDeaths} </td>
+<td class="w3-text-light-green">{ country[1].newRecovered} </td>
+<td class="w3-text-cyan"> { country[1].totalConfirmed} </td>
+<td class="w3-text-red"> { country[1].totalDeaths} </td>
+<td class="w3-text-light-green"> { country[1].totalRecovered}</td>
+</tr>
+</table>
+<div class="pagination"  style="float:right; padding-top:  2%;">
+<button onclick={()=>filtreTable(this.state.page - 1)}>&laquo; </button>
+<button each={page in this.state.pages} onclick={()=>filtreTable(page)}> {page+1} </button>
+<button onclick={()=>filtreTable(this.state.page + 1)}>&raquo; </button>
+</div>
+
+<script>
+export default {
+    async onBeforeMount(state, props) {
+            this.state.data = this.props.data;
+            this.state.datafull = this.props.data;
+            this.state.debut = 0;
+            this.state.pagination = 20;
+            this.state.fin = this.state.debut + this.state.pagination;
+            this.state.page = 0;
+            this.state.mount = 0;
+            this.state.numpages = Math.round(Object.entries(this.state.data).length/this.state.pagination);
+            this.state.pages =  Array.from(new Array(this.state.numpages), (x, i) => i);
+            this.tri('asc', 0, 0);
+            this.state.url = this.props.url;
+
+    },
+
+    filtreTable(page){
+            if (page > (this.state.numpages - 1)) page = this.state.numpages - 1;
+            if (page < 0) page = 0;
+            this.state.debut = page*this.state.pagination;
+            this.state.page = page;
+            this.state.fin = this.state.debut + this.state.pagination;
+            this.update();
+
+    },
+
+    tri(type, categorie, numerique) {
+
+        // Ajouter des booléens pour conserver le type de tri
+        let categories = ['Country', 'newConfirmed', 'newDeaths', 'newRecovered', 'totalConfirmed', 'totalDeaths', 'totalRecovered'];
+        let array_values = Object.values(this.state.datafull);
+        let sorting;
+        if ( categorie == 0){
+                sorting = array_values.sort((a,b) =>  {
+                let string1, string2;
+                if (type == 'asc')  {
+                 string1 = a[categories[categorie]].toLowerCase();
+                 string2 = b[categories[categorie]].toLowerCase();
+                 
+                }
+                else {
+                    string1 = b[categories[categorie]].toLowerCase();
+                    string2 = a[categories[categorie]].toLowerCase();
+                }
+                if (string1< string2) return -1;
+                if (string1 > string2) return 1;
+                return 0;
+            });
+             
+        }
+        else {
+            
+            sorting = array_values.sort((a,b) =>  {
+                let string1, string2;
+                if (type == 'asc')  {
+                 string1 = a[categories[categorie]];
+                 string2 = b[categories[categorie]];
+                 
+                }
+                else {
+                    string1 = b[categories[categorie]];
+                    string2 = a[categories[categorie]];
+                }
+                if (string1< string2) return -1;
+                if (string1 > string2) return 1;
+                return 0;
+            });
+
+
+        }
+                            this.state.data = sorting;
+                            if (this.state.mount > 0)  this.update();
+                            else this.state.mount = 1;
+
+
+    },
+
+    recherche(){
+    let array_values = Object.values(this.state.datafull);
+    let barre = document.getElementById("rechercheCovid").value;
+    let filtre = barre.toLowerCase();
+    let filtered = array_values.filter((word) => {    
+    return word.Country.toLowerCase().includes(filtre)
+    });
+        this.state.data = filtered;
+        this.update();
+      },
+
+          paginer(){
+
+        let x = document.getElementById("pagineCovid").value;;
+        this.state.pagination = x;
+        this.state.numpages = Math.round(Object.entries(this.state.data).length/this.state.pagination);
+        this.state.pages =  Array.from(new Array(this.state.numpages), (x, i) => i);
+        this.state.fin = this.state.debut + this.state.pagination;
+        this.update();
+        console.log(this.state.numpages);
+    }
+    
+        
+    }
+
+    
+
+</script>
+
+</tablent>

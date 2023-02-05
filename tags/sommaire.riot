@@ -1,0 +1,42 @@
+<sommaire>
+<br>
+<h2 style="padding-top:3%;"> Statistiques Globales </h2>
+<table style="width : 100%; padding-bottom: 3%;">
+<tbody>
+<td>
+<ul> 
+<li class="w3-text-cyan">Nombre de Cas (Total) : {this.state.totalconfirmed} </li>
+<li class="w3-text-red">Nombre de Décès (Total) : {this.state.totalmorts} </li>
+<li class="w3-text-light-green">Nombre de Guérisons (Total) : {this.state.totalrecover} </li>
+</ul>
+</td>
+<td>
+<ul> 
+<li class="w3-text-cyan">Nombre de Cas (Aujourd'hui) : {this.state.newconfirmed} </li>
+<li class="w3-text-red">Nombre de Décès (Aujourd'hui) : {this.state.newmorts} </li>
+<li class="w3-text-light-green">Nombre de Guérisons (Aujourd'hui) : {this.state.newrecover} </li>
+</ul>
+</td>
+</tbody>
+</table>
+<script>
+export default {
+    async onBeforeMount(state, props) {
+        let dataent = this.props.data;
+        this.state.newconfirmed = dataent.NewConfirmed;
+        this.state.newmorts = dataent.NewDeaths;
+        this.state.newrecover = dataent.NewRecovered;
+        this.state.totalconfirmed = dataent.TotalConfirmed;
+        this.state.totalmorts = dataent.TotalDeaths;
+        this.state.totalrecover = dataent.TotalRecovered;
+
+        
+                
+    }
+
+
+}
+
+</script>
+
+</sommaire>

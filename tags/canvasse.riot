@@ -1,0 +1,141 @@
+<canvasse>
+<div class="title">
+<h1> {this.state.pays} </h1>
+<br>
+<h2> Statistiques </h2> 
+<span> Stats quotidiennes du {getDate(this.state.date[0])} au {getDate(this.state.date[this.state.fin])} </span>
+</div>
+
+<table style="margin-top:3%;" class="w3-table">
+<tr> 
+<th> Cas Confirmés </th>
+<th> Cas Actifs </th>
+<th> Morts </th>
+<th> Guérisons</th>
+</tr> 
+<tr>
+<td>
+<ul>
+<li> Moyenne  : {getMoyenne(this.state.confirmed)} </li>
+<li> Mediane : {getMediane(this.state.confirmed)} </li>
+</ul>
+</td>
+<td>
+<ul>
+<li> Moyenne  : {getMoyenne(this.state.active)} </li>
+<li> Mediane : {getMediane(this.state.active)} </li>
+</ul>
+</td>
+<td>
+<ul>
+<li> Moyenne : {getMoyenne(this.state.deaths)} </li>
+<li> Mediane : {getMediane(this.state.deaths)} </li>
+</ul>
+</td>
+<td>
+<ul>
+<li> Moyenne : {getMoyenne(this.state.recovered)} </li>
+<li> Mediane : {getMediane(this.state.recovered)}  </li>
+</ul>
+</td>
+</tr>
+</table>
+<span> Date  : </span>
+<select style="margin-top:3%;" id="statsDate" onchange={()=>statsDate()}>
+    <option each={date in this.state.date} value={getDateNum(this.state.date, date)}> {getDate(date)} ({this.state.province[getDateNum(this.state.date, date)]}) </option>
+	</select>
+
+
+<table  class="w3-table w3-striped" id="tablePays" style="margin-top:3%;">
+<tr> 
+<th > <strong>Confirmés (Total) </strong> </th>
+<th > <strong>Actifs (Total) </strong> </th>
+
+<th > <strong>Morts (Total) </strong> </th>
+
+<th > <strong>Guéris (Total) </strong> </th>
+
+</tr>
+<tr>
+<td class="w3-text-cyan">{ this.state.confirmed[this.state.current]} </td>
+<td class="w3-text-yellow">{ this.state.active[this.state.current]} </td>
+<td class="w3-text-red"> { this.state.recovered[this.state.current]} </td>
+<td class="w3-text-light-green"> { this.state.deaths[this.state.current]} </td>
+</tr>
+</table>
+
+
+
+
+<script>
+	export default {
+
+		async onBeforeMount(props, state){
+			this.state.data = this.props.data;
+			this.state.pays = this.state.data.Country;
+			this.state.active = this.state.data.Active;
+			this.state.confirmed = this.state.data.Confirmed;
+			this.state.deaths = this.state.data.Deaths;
+			this.state.recovered = this.state.data.Recovered;
+			this.state.date = this.state.data.Date;
+			this.state.province = this.state.data.Province;
+			this.state.fin = this.state.data.Date.length - 1;
+			this.state.current = this.state.fin;
+			this.state.slug = this.props.slug;
+
+		},
+
+				getDate(d) {
+				let date = d.substring(0, 10);
+				let temp = date.split('-');
+				date = temp[2] + "/" + temp[1] + "/" + temp[0];
+				return date;
+			
+		},
+			/* Code récupéré sur stackoverflow */
+		getDateNum(object, value){
+			 let kiz = Object.keys(object).find(key => object[key] === value);
+
+			 return kiz;
+			
+
+		},
+
+
+		getMoyenne(tab){
+
+			let moyenne = 0;
+			for (valeur in tab) moyenne += tab[valeur];
+			return Math.round(moyenne/tab.length);
+		},
+
+			/* Code récupéré sur stackoverflow */
+		 getMediane(numbers) {
+    const sorted = numbers.slice().sort((a, b) => a - b);
+    const middle = Math.floor(sorted.length / 2);
+
+    if (sorted.length % 2 === 0) {
+        return (sorted[middle - 1] + sorted[middle]) / 2;
+    }
+
+    return sorted[middle];
+},
+
+
+
+	statsDate(){
+		let d = document.getElementById("statsDate").value;
+
+		this.state.current = d;
+		console.log(this.state.current);
+		this.update();
+	}
+
+	}
+
+
+
+
+
+	</script>
+</canvasse>

@@ -1,0 +1,88 @@
+<application>
+<div class="title">
+<router>
+<route path={urlent}>
+<h1>Covid 19</h1><br> 
+<span>Données datant du {getToday()} à {getHeure()}  <br>Dernière mise à jour du cache le {getExpiry()} à {getExpiryHeure()}  </span>
+<sommaire data={DataSummary()}></sommaire>
+<tablent data={listePays()} url={urlent}></tablent>
+</div>
+
+</route>
+<route path="{urlpays}">
+<canvasse data={getInfoSlug(route.params.slug)} slug="{route.params.slug}"></canvasse>
+</route>
+</router>
+<script>
+	export default {
+
+	urlent : "/~mambilat/covid19/",
+	urlpays : "/~mambilat/covid19/#/country/:slug",
+
+	getToday() {
+
+    let date = this.donnees.getDate();
+    return date;
+
+},
+
+
+getHeure() {
+
+	let heure = this.donnees.getHeure();
+	return heure;
+},
+
+getExpiry(){
+	 let date = this.donnees.getExpiry();
+    return date;
+
+},
+
+
+getExpiryHeure(){
+	 let date = this.donnees.getExpiryHeure();
+    return date;
+
+},
+
+	async onBeforeMount(props, state){
+		 this.state.data = this.DataSummary();
+	 },
+
+		  DataSummary(){
+			let dataent = this.donnees.getDataSummary();
+			return dataent;
+
+
+
+		},
+
+		listePays(){
+			let pays = this.donnees.getListePays();
+			return pays;
+		},
+
+		getInfoSlug(slug){
+				this.data = this.listePays();
+				let country = "";
+
+					for (pays in this.data) {
+				if ( this.data[pays].slug === slug)  country = this.data[pays].Country;
+			
+
+			}
+			let retour = this.donnees.getDataPays(slug, country);
+			return retour;
+
+		}
+
+
+
+
+
+
+
+	}
+</script>
+</application>

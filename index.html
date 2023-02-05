@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Covid 19</title>
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+        <link rel="stylesheet" href="./style.css">
+        <script src="https://cdn.jsdelivr.net/npm/riot@5.3.0/riot+compiler.min.js"></script>
+        <script src="https://unpkg.com/@riotjs/route/route.js"></script>
+        <script src="tags/application.riot" type="riot"></script>
+        <script src="tags/tablent.riot" type="riot"></script>
+        <script src="tags/sommaire.riot" type="riot"></script>
+        <script src="tags/canvasse.riot" type="riot"></script>
+        <script src="js/coviddeeznuts.js"></script>
+        <script src="js/applicative.js"></script>
+    </head>
+    <body container style="padding-left: 5%; padding-right: 5%; margin-top:3%;">
+        <application>
+        </application>
+        <script>
+            riot.register('router', route.Router)
+      		riot.register('route', route.Route)
+              
+              riot.compile().then(function() {
+                  let donnees = makeData()
+
+                riot.install(function(component){
+                    if (component.name == "application")
+                        component.donnees = donnees
+                })
+                  riot.mount('application');
+              })
+        </script>
+
+    </body>
+
+</html>
